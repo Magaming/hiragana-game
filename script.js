@@ -21,79 +21,18 @@ class HiraganaFishingGame {
             'わ', 'を', 'ん'
         ];
         
-        // 魚のSVGデータ
-        this.fishSVGs = [
-            // 赤い魚
-            `<svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="40" cy="30" rx="25" ry="15" fill="#FF6B6B" stroke="#E55555" stroke-width="2"/>
-                <path d="M15 30 L5 20 L5 40 Z" fill="#FF6B6B" stroke="#E55555" stroke-width="2"/>
-                <path d="M35 15 L40 5 L45 15 Z" fill="#FF5555"/>
-                <circle cx="50" cy="25" r="6" fill="white" stroke="#333" stroke-width="1"/>
-                <circle cx="52" cy="25" r="3" fill="#333"/>
-                <circle cx="53" cy="23" r="1" fill="white"/>
-                <ellipse cx="62" cy="30" rx="3" ry="2" fill="#FF5555"/>
-            </svg>`,
-            // 青い魚
-            `<svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="40" cy="30" rx="25" ry="15" fill="#4ECDC4" stroke="#3BB5AD" stroke-width="2"/>
-                <path d="M15 30 L5 20 L5 40 Z" fill="#4ECDC4" stroke="#3BB5AD" stroke-width="2"/>
-                <path d="M35 15 L40 5 L45 15 Z" fill="#3BB5AD"/>
-                <circle cx="50" cy="25" r="6" fill="white" stroke="#333" stroke-width="1"/>
-                <circle cx="52" cy="25" r="3" fill="#333"/>
-                <circle cx="53" cy="23" r="1" fill="white"/>
-                <ellipse cx="62" cy="30" rx="3" ry="2" fill="#3BB5AD"/>
-            </svg>`,
-            // 黄色い魚
-            `<svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="40" cy="30" rx="25" ry="15" fill="#FFE66D" stroke="#E6CC5A" stroke-width="2"/>
-                <path d="M15 30 L5 20 L5 40 Z" fill="#FFE66D" stroke="#E6CC5A" stroke-width="2"/>
-                <path d="M35 15 L40 5 L45 15 Z" fill="#E6CC5A"/>
-                <circle cx="50" cy="25" r="6" fill="white" stroke="#333" stroke-width="1"/>
-                <circle cx="52" cy="25" r="3" fill="#333"/>
-                <circle cx="53" cy="23" r="1" fill="white"/>
-                <ellipse cx="62" cy="30" rx="3" ry="2" fill="#E6CC5A"/>
-            </svg>`,
-            // 緑の魚
-            `<svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="40" cy="30" rx="25" ry="15" fill="#95E1A3" stroke="#7BC47F" stroke-width="2"/>
-                <path d="M15 30 L5 20 L5 40 Z" fill="#95E1A3" stroke="#7BC47F" stroke-width="2"/>
-                <path d="M35 15 L40 5 L45 15 Z" fill="#7BC47F"/>
-                <circle cx="50" cy="25" r="6" fill="white" stroke="#333" stroke-width="1"/>
-                <circle cx="52" cy="25" r="3" fill="#333"/>
-                <circle cx="53" cy="23" r="1" fill="white"/>
-                <ellipse cx="62" cy="30" rx="3" ry="2" fill="#7BC47F"/>
-            </svg>`,
-            // 紫の魚
-            `<svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="40" cy="30" rx="25" ry="15" fill="#B19CD9" stroke="#9B7BC7" stroke-width="2"/>
-                <path d="M15 30 L5 20 L5 40 Z" fill="#B19CD9" stroke="#9B7BC7" stroke-width="2"/>
-                <path d="M35 15 L40 5 L45 15 Z" fill="#9B7BC7"/>
-                <circle cx="50" cy="25" r="6" fill="white" stroke="#333" stroke-width="1"/>
-                <circle cx="52" cy="25" r="3" fill="#333"/>
-                <circle cx="53" cy="23" r="1" fill="white"/>
-                <ellipse cx="62" cy="30" rx="3" ry="2" fill="#9B7BC7"/>
-            </svg>`,
-            // オレンジの魚
-            `<svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="40" cy="30" rx="25" ry="15" fill="#FF9F43" stroke="#E6883A" stroke-width="2"/>
-                <path d="M15 30 L5 20 L5 40 Z" fill="#FF9F43" stroke="#E6883A" stroke-width="2"/>
-                <path d="M35 15 L40 5 L45 15 Z" fill="#E6883A"/>
-                <circle cx="50" cy="25" r="6" fill="white" stroke="#333" stroke-width="1"/>
-                <circle cx="52" cy="25" r="3" fill="#333"/>
-                <circle cx="53" cy="23" r="1" fill="white"/>
-                <ellipse cx="62" cy="30" rx="3" ry="2" fill="#E6883A"/>
-            </svg>`,
-            // ピンクの魚
-            `<svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="40" cy="30" rx="25" ry="15" fill="#FF8A9B" stroke="#E67284" stroke-width="2"/>
-                <path d="M15 30 L5 20 L5 40 Z" fill="#FF8A9B" stroke="#E67284" stroke-width="2"/>
-                <path d="M35 15 L40 5 L45 15 Z" fill="#E67284"/>
-                <circle cx="50" cy="25" r="6" fill="white" stroke="#333" stroke-width="1"/>
-                <circle cx="52" cy="25" r="3" fill="#333"/>
-                <circle cx="53" cy="23" r="1" fill="white"/>
-                <ellipse cx="62" cy="30" rx="3" ry="2" fill="#E67284"/>
-            </svg>`
+        // 魚の画像ファイル
+        this.fishImages = [
+            'images/fish/character_fish_ika.png',
+            'images/fish/fish_maguro.png',
+            'images/fish/fish_mola2.png',
+            'images/fish/fish_shark.png',
+            'images/fish/fish_tako.png',
+            'images/fish/shinkai_chouchinankou.png'
         ];
+        
+        // 使用済み魚画像のトラッキング
+        this.usedFishImages = [];
         
         this.init();
     }
@@ -135,7 +74,7 @@ class HiraganaFishingGame {
     
     spawnFishes() {
         const fishContainer = document.getElementById('fish-container');
-        const numberOfFishes = 6;
+        const numberOfFishes = 5;
         
         // ターゲットのひらがなを持つ魚を1匹は必ず生成
         this.createFish(this.targetHiragana, true);
@@ -147,16 +86,32 @@ class HiraganaFishingGame {
         }
     }
     
+    getRandomFishImage() {
+        // 全ての画像が使用された場合はリセット
+        if (this.usedFishImages.length >= this.fishImages.length) {
+            this.usedFishImages = [];
+        }
+        
+        // 使用されていない画像から選択
+        const availableImages = this.fishImages.filter(img => !this.usedFishImages.includes(img));
+        const selectedImage = availableImages[Math.floor(Math.random() * availableImages.length)];
+        
+        // 使用済みリストに追加
+        this.usedFishImages.push(selectedImage);
+        
+        return selectedImage;
+    }
+    
     createFish(hiragana, isTarget) {
         const fishContainer = document.getElementById('fish-container');
         const fish = document.createElement('div');
         fish.className = 'fish';
         
-        const fishSVG = this.fishSVGs[Math.floor(Math.random() * this.fishSVGs.length)];
+        const fishImageSrc = this.getRandomFishImage();
         
         fish.innerHTML = `
             <div class="fish-body">
-                ${fishSVG}
+                <img src="${fishImageSrc}" alt="魚" class="fish-image">
                 <div class="hiragana-text">${hiragana}</div>
             </div>
         `;
