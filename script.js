@@ -77,6 +77,9 @@ class HiraganaFishingGame {
         const numberOfFishes = 5;
         const usedHiragana = new Set();
         
+        // 魚画像の使用済みリストをリセット
+        this.usedFishImages = [];
+        
         // ターゲットのひらがなを持つ魚を1匹は必ず生成
         this.createFish(this.targetHiragana, true);
         usedHiragana.add(this.targetHiragana);
