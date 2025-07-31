@@ -225,6 +225,7 @@ class HiraganaFishingGame {
             } else {
                 // 不正解
                 this.showFeedback('ざんねん... 😅', 'miss');
+                this.playMissSound();
             }
             
             this.updateScore();
@@ -343,6 +344,35 @@ class HiraganaFishingGame {
             
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 0.5);
+        } catch (error) {
+            console.log('音声再生に対応していません');
+        }
+    }
+    
+    playMissSound() {
+        // Web Audio APIを使用したブブー音
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // ブブー音の周波数設定（低い音で不協和音）
+            oscillator.frequency.setValueAtTime(150, audioContext.currentTime); // 低いF音
+            oscillator.frequency.setValueAtTime(120, audioContext.currentTime + 0.15); // さらに低く
+            oscillator.frequency.setValueAtTime(100, audioContext.currentTime + 0.3); // 最も低く
+            
+            // 音量設定
+            gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+            
+            // 波形をsquareにしてブザー音らしく
+            oscillator.type = 'square';
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.6);
         } catch (error) {
             console.log('音声再生に対応していません');
         }
