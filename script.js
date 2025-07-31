@@ -116,14 +116,11 @@ class HiraganaFishingGame {
             </div>
         `;
         
-        // ランダムな位置に配置
-        const maxX = fishContainer.offsetWidth - 100;
-        const maxY = fishContainer.offsetHeight - 150;
-        const x = Math.random() * maxX;
-        const y = Math.random() * maxY + 50;
+        // 重ならない位置を見つける
+        const position = this.findNonOverlappingPosition(fishContainer);
         
-        fish.style.left = x + 'px';
-        fish.style.top = y + 'px';
+        fish.style.left = position.x + 'px';
+        fish.style.top = position.y + 'px';
         
         // アニメーション遅延をランダムに設定
         fish.style.animationDelay = Math.random() * 2 + 's';
@@ -132,7 +129,62 @@ class HiraganaFishingGame {
         fish.addEventListener('click', () => this.catchFish(fish, hiragana));
         
         fishContainer.appendChild(fish);
-        this.fishes.push({ element: fish, hiragana: hiragana, isTarget: isTarget });
+        this.fishes.push({ element: fish, hiragana: hiragana, isTarget: isTarget, x: position.x, y: position.y });
+    }
+    
+    findNonOverlappingPosition(fishContainer) {
+        const fishWidth = 120;
+        const fishHeight = 90;
+        const margin = 20; // 魚同士の最小間隔
+        const maxX = fishContainer.offsetWidth - fishWidth;
+        const maxY = fishContainer.offsetHeight - fishHeight - 50;
+        const minY = 50;
+        
+        let attempts = 0;
+        const maxAttempts = 50;
+        
+        while (attempts < maxAttempts) {
+            const x = Math.random() * maxX;
+            const y = Math.random() * (maxY - minY) + minY;
+            
+            // 既存の魚と重ならないかチェック
+            let overlapping = false;
+            for (const existingFish of this.fishes) {
+                const dx = Math.abs(x - existingFish.x);
+                const dy = Math.abs(y - existingFish.y);
+                
+                if (dx < fishWidth + margin && dy < fishHeight + margin) {
+                    overlapping = true;
+                    break;
+                }
+            }
+            
+            if (!overlapping) {
+                return { x, y };
+            }
+            
+            attempts++;
+        }
+        
+        // 最大試行回数に達した場合は、グリッド配置にフォールバック
+        const gridCols = Math.floor(fishContainer.offsetWidth / (fishWidth + margin));
+        const gridRows = Math.floor((maxY - minY) / (fishHeight + margin));
+        const totalPositions = gridCols * gridRows;
+        const fishIndex = this.fishes.length;
+        
+        if (fishIndex < totalPositions) {
+            const col = fishIndex % gridCols;
+            const row = Math.floor(fishIndex / gridCols);
+            const x = col * (fishWidth + margin) + margin;
+            const y = row * (fishHeight + margin) + minY;
+            return { x, y };
+        }
+        
+        // それでも配置できない場合はランダム位置
+        return {
+            x: Math.random() * maxX,
+            y: Math.random() * (maxY - minY) + minY
+        };
     }
     
     enableFishCatching() {
