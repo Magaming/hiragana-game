@@ -364,8 +364,8 @@ class HiraganaFishingGame {
             oscillator.frequency.setValueAtTime(120, audioContext.currentTime + 0.15); // さらに低く
             oscillator.frequency.setValueAtTime(100, audioContext.currentTime + 0.3); // 最も低く
             
-            // 音量設定
-            gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+            // 音量設定（控えめに）
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
             
             // 波形をsquareにしてブザー音らしく
