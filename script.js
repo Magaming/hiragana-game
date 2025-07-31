@@ -75,14 +75,34 @@ class HiraganaFishingGame {
     spawnFishes() {
         const fishContainer = document.getElementById('fish-container');
         const numberOfFishes = 5;
+        const usedHiragana = new Set();
         
         // ターゲットのひらがなを持つ魚を1匹は必ず生成
         this.createFish(this.targetHiragana, true);
+        usedHiragana.add(this.targetHiragana);
         
-        // 残りの魚をランダムに生成
+        // 残りの魚をランダムに生成（重複なし）
         for (let i = 1; i < numberOfFishes; i++) {
-            const randomHiragana = this.hiraganaList[Math.floor(Math.random() * this.hiraganaList.length)];
+            let randomHiragana;
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            // 重複しないひらがなを見つける
+            do {
+                randomHiragana = this.hiraganaList[Math.floor(Math.random() * this.hiraganaList.length)];
+                attempts++;
+            } while (usedHiragana.has(randomHiragana) && attempts < maxAttempts);
+            
+            // 見つからない場合は使用可能なひらがなから選択
+            if (usedHiragana.has(randomHiragana)) {
+                const availableHiragana = this.hiraganaList.filter(h => !usedHiragana.has(h));
+                if (availableHiragana.length > 0) {
+                    randomHiragana = availableHiragana[Math.floor(Math.random() * availableHiragana.length)];
+                }
+            }
+            
             this.createFish(randomHiragana, false);
+            usedHiragana.add(randomHiragana);
         }
     }
     
