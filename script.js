@@ -11,7 +11,7 @@ class HiraganaFishingGame {
         this.speechSynthesis = window.speechSynthesis;
         this.voiceSettings = {
             lang: 'ja-JP',
-            rate: 0.5,  // より遅く
+            rate: 0.5,  // ゆっくり
             pitch: 1.2,
             volume: 0.8
         };
@@ -107,14 +107,14 @@ class HiraganaFishingGame {
         // 既存の音声を停止
         this.speechSynthesis.cancel();
         
-        const message = `つぎは、${this.targetHiragana}、だよ。`;
-        const utterance = new SpeechSynthesisUtterance(message);
+        // 1回目の音声を作成
+        const firstUtterance = new SpeechSynthesisUtterance(this.targetHiragana);
         
         // 音声設定を適用
-        utterance.lang = this.voiceSettings.lang;
-        utterance.rate = this.voiceSettings.rate;
-        utterance.pitch = this.voiceSettings.pitch;
-        utterance.volume = this.voiceSettings.volume;
+        firstUtterance.lang = this.voiceSettings.lang;
+        firstUtterance.rate = this.voiceSettings.rate;
+        firstUtterance.pitch = this.voiceSettings.pitch;
+        firstUtterance.volume = this.voiceSettings.volume;
         
         // 日本語音声を選択（利用可能な場合）
         const voices = this.speechSynthesis.getVoices();
@@ -123,12 +123,31 @@ class HiraganaFishingGame {
         );
         
         if (japaneseVoice) {
-            utterance.voice = japaneseVoice;
+            firstUtterance.voice = japaneseVoice;
         }
         
-        // 少し遅延してから音声を再生（魚の生成後）
+        // 1回目の音声終了後に2回目を再生
+        firstUtterance.onend = () => {
+            setTimeout(() => {
+                const secondUtterance = new SpeechSynthesisUtterance(this.targetHiragana);
+                
+                // 同じ音声設定を適用
+                secondUtterance.lang = this.voiceSettings.lang;
+                secondUtterance.rate = this.voiceSettings.rate;
+                secondUtterance.pitch = this.voiceSettings.pitch;
+                secondUtterance.volume = this.voiceSettings.volume;
+                
+                if (japaneseVoice) {
+                    secondUtterance.voice = japaneseVoice;
+                }
+                
+                this.speechSynthesis.speak(secondUtterance);
+            }, 500); // 0.5秒間を空ける
+        };
+        
+        // 少し遅延してから1回目の音声を再生（魚の生成後）
         setTimeout(() => {
-            this.speechSynthesis.speak(utterance);
+            this.speechSynthesis.speak(firstUtterance);
         }, 800);
     }
     
