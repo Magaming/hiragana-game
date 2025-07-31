@@ -317,9 +317,11 @@ class HiraganaFishingGame {
         
         document.body.appendChild(feedback);
         
+        // 成功時は3秒、失敗時は2秒表示
+        const displayTime = type === 'success' ? 3000 : 2000;
         setTimeout(() => {
             feedback.remove();
-        }, 2000);
+        }, displayTime);
     }
     
     playSuccessSound() {
