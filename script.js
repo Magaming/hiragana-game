@@ -7,6 +7,15 @@ class HiraganaFishingGame {
         this.isGameActive = true;
         this.isCasting = false;
         
+        // 音声合成の設定
+        this.speechSynthesis = window.speechSynthesis;
+        this.voiceSettings = {
+            lang: 'ja-JP',
+            rate: 0.5,  // より遅く
+            pitch: 1.2,
+            volume: 0.8
+        };
+        
         // ひらがな一覧（子ども向けに基本的なもの）
         this.hiraganaList = [
             'あ', 'い', 'う', 'え', 'お',
@@ -39,7 +48,20 @@ class HiraganaFishingGame {
     
     init() {
         this.setupEventListeners();
+        this.initializeVoices();
         this.newGame();
+    }
+    
+    // 音声の初期化
+    initializeVoices() {
+        if (this.speechSynthesis) {
+            // 音声リストが読み込まれるまで待機
+            if (this.speechSynthesis.getVoices().length === 0) {
+                this.speechSynthesis.addEventListener('voiceschanged', () => {
+                    console.log('音声リストが読み込まれました');
+                });
+            }
+        }
     }
     
     setupEventListeners() {
@@ -70,6 +92,113 @@ class HiraganaFishingGame {
     generateNewTarget() {
         this.targetHiragana = this.hiraganaList[Math.floor(Math.random() * this.hiraganaList.length)];
         document.getElementById('target-hiragana').textContent = this.targetHiragana;
+        
+        // 音声案内を再生
+        this.announceTarget();
+    }
+    
+    // 音声案内機能
+    announceTarget() {
+        if (!this.speechSynthesis) {
+            console.log('音声合成に対応していません');
+            return;
+        }
+        
+        // 既存の音声を停止
+        this.speechSynthesis.cancel();
+        
+        const message = `つぎは、${this.targetHiragana}、だよ。`;
+        const utterance = new SpeechSynthesisUtterance(message);
+        
+        // 音声設定を適用
+        utterance.lang = this.voiceSettings.lang;
+        utterance.rate = this.voiceSettings.rate;
+        utterance.pitch = this.voiceSettings.pitch;
+        utterance.volume = this.voiceSettings.volume;
+        
+        // 日本語音声を選択（利用可能な場合）
+        const voices = this.speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        // 少し遅延してから音声を再生（魚の生成後）
+        setTimeout(() => {
+            this.speechSynthesis.speak(utterance);
+        }, 800);
+    }
+    
+    // 正解時の音声案内
+    announceSuccess() {
+        if (!this.speechSynthesis) return;
+        
+        this.speechSynthesis.cancel();
+        
+        const messages = [
+            'やったね！',
+            'せいかい！',
+            'すごいね！',
+            'よくできました！'
+        ];
+        
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        const utterance = new SpeechSynthesisUtterance(message);
+        
+        utterance.lang = this.voiceSettings.lang;
+        utterance.rate = this.voiceSettings.rate;
+        utterance.pitch = this.voiceSettings.pitch + 0.2; // 少し高めの声
+        utterance.volume = this.voiceSettings.volume;
+        
+        const voices = this.speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        setTimeout(() => {
+            this.speechSynthesis.speak(utterance);
+        }, 500);
+    }
+    
+    // 不正解時の音声案内
+    announceMiss() {
+        if (!this.speechSynthesis) return;
+        
+        this.speechSynthesis.cancel();
+        
+        const messages = [
+            'ざんねん',
+            'もういちど',
+            'がんばって'
+        ];
+        
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        const utterance = new SpeechSynthesisUtterance(message);
+        
+        utterance.lang = this.voiceSettings.lang;
+        utterance.rate = this.voiceSettings.rate - 0.1; // 少し遅めの声
+        utterance.pitch = this.voiceSettings.pitch - 0.2; // 少し低めの声
+        utterance.volume = this.voiceSettings.volume;
+        
+        const voices = this.speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        setTimeout(() => {
+            this.speechSynthesis.speak(utterance);
+        }, 500);
     }
     
     spawnFishes() {
@@ -245,10 +374,12 @@ class HiraganaFishingGame {
                 this.score += 10;
                 this.showFeedback('やったね！ 🎉', 'success');
                 this.playSuccessSound();
+                this.announceSuccess();
             } else {
                 // 不正解
                 this.showFeedback('ざんねん... 😅', 'miss');
                 this.playMissSound();
+                this.announceMiss();
             }
             
             this.updateScore();
