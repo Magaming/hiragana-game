@@ -242,6 +242,12 @@ class HiraganaFishingGame {
         // クリックイベント
         fish.addEventListener('click', () => this.catchFish(fish, hiragana));
         
+        // モバイル端末ではタッチした瞬間に発火したい
+        fish.addEventListener('touchstart', (event) => {
+            this.catchFish(fish, hiragana);
+            event.preventDefault();
+        });
+
         fishContainer.appendChild(fish);
         this.fishes.push({ element: fish, hiragana: hiragana, isTarget: isTarget, x: position.x, y: position.y });
     }
