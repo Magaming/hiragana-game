@@ -133,9 +133,9 @@ class HiraganaFishingGame {
     }
     
     findNonOverlappingPosition(fishContainer) {
-        const fishWidth = 120;
-        const fishHeight = 90;
-        const margin = 20; // 魚同士の最小間隔
+        const fishWidth = 140;
+        const fishHeight = 105;
+        const margin = 25; // 魚同士の最小間隔
         const uiAreaHeight = 130; // 上部UIエリアの高さ
         const maxX = fishContainer.offsetWidth - fishWidth;
         const maxY = fishContainer.offsetHeight - fishHeight - 50;

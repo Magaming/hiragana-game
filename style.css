@@ -111,10 +111,10 @@ body {
 
 .hook {
     position: absolute;
-    bottom: -20px;
+    bottom: -40px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 1.5em;
+    font-size: 2.2em;
     animation: sway 2s ease-in-out infinite alternate;
 }
 
@@ -141,8 +141,8 @@ body {
     transition: transform 0.3s ease;
     animation: swim 4s ease-in-out infinite;
     user-select: none;
-    width: 120px;
-    height: 90px;
+    width: 140px;
+    height: 105px;
 }
 
 .fish:hover {
@@ -172,8 +172,8 @@ body {
 }
 
 .fish-image {
-    width: 120px;
-    height: 90px;
+    width: 140px;
+    height: 105px;
     object-fit: contain;
 }
 
@@ -182,7 +182,7 @@ body {
     top: 85%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
@@ -197,8 +197,8 @@ body {
     pointer-events: none;
     z-index: 5;
     background: rgba(0, 0, 0, 0.3);
-    padding: 2px 6px;
-    border-radius: 6px;
+    padding: 3px 8px;
+    border-radius: 8px;
     border: 1px solid #FFFFFF;
 }
 
