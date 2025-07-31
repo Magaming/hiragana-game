@@ -51,9 +51,9 @@ body {
     height: 130px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 25px;
-    padding-top: 35px;
+    padding-top: 15px;
     z-index: 15;
     pointer-events: none;
 }
