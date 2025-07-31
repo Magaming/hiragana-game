@@ -29,42 +29,58 @@ body {
 .game-header h1 {
     color: #2E8B57;
     font-size: 2.5em;
-    margin-bottom: 15px;
+    margin-bottom: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.score-board {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.score, .target {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #2E8B57;
-    background: #F0F8FF;
-    padding: 10px 20px;
-    border-radius: 25px;
-    border: 3px solid #4682B4;
-}
-
-#target-hiragana {
-    font-size: 2em;
-    color: #FF6347;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .game-area {
     position: relative;
-    height: 500px;
+    height: 600px;
     background: url('images/background.jpg') center center / cover no-repeat;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     margin-bottom: 20px;
+}
+
+.game-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    z-index: 15;
+    pointer-events: none;
+}
+
+.score-display, .target-display {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FFFFFF;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: 3px solid #FFFFFF;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    pointer-events: auto;
+}
+
+.score-display {
+    color: #32CD32;
+}
+
+.target-display {
+    color: #FF6347;
+}
+
+#target-hiragana {
+    font-size: 1.5em;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .fishing-line {

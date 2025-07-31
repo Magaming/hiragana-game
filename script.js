@@ -136,9 +136,10 @@ class HiraganaFishingGame {
         const fishWidth = 120;
         const fishHeight = 90;
         const margin = 20; // 魚同士の最小間隔
+        const uiAreaHeight = 80; // 上部UIエリアの高さ
         const maxX = fishContainer.offsetWidth - fishWidth;
         const maxY = fishContainer.offsetHeight - fishHeight - 50;
-        const minY = 50;
+        const minY = uiAreaHeight + 20; // UIエリアの下から20px空ける
         
         let attempts = 0;
         const maxAttempts = 50;
@@ -180,7 +181,7 @@ class HiraganaFishingGame {
             return { x, y };
         }
         
-        // それでも配置できない場合はランダム位置
+        // それでも配置できない場合はランダム位置（UIエリアを避ける）
         return {
             x: Math.random() * maxX,
             y: Math.random() * (maxY - minY) + minY
