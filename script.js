@@ -1,3 +1,66 @@
+// 音声合成クラス
+class VoiceSynthesizer {
+    constructor(settings) {
+        this.speechSynthesis = window.speechSynthesis;
+        this.settings = settings;
+        this.japaneseVoice = null;
+        this.initializeVoice();
+    }
+    
+    initializeVoice() {
+        if (!this.speechSynthesis) return;
+        
+        const voices = this.speechSynthesis.getVoices();
+        this.japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        // 音声リストが読み込まれていない場合は待機
+        if (voices.length === 0) {
+            this.speechSynthesis.addEventListener('voiceschanged', () => {
+                const newVoices = this.speechSynthesis.getVoices();
+                this.japaneseVoice = newVoices.find(voice => 
+                    voice.lang.includes('ja') || voice.name.includes('Japanese')
+                );
+            });
+        }
+    }
+    
+    createUtterance(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = this.settings.lang;
+        utterance.rate = this.settings.rate;
+        utterance.pitch = this.settings.pitch;
+        utterance.volume = this.settings.volume;
+        
+        if (this.japaneseVoice) {
+            utterance.voice = this.japaneseVoice;
+        }
+        
+        return utterance;
+    }
+    
+    speak(text, onEnd = null) {
+        if (!this.speechSynthesis) {
+            console.log('音声合成に対応していません');
+            return;
+        }
+        
+        const utterance = this.createUtterance(text);
+        if (onEnd) {
+            utterance.onend = onEnd;
+        }
+        
+        this.speechSynthesis.speak(utterance);
+    }
+    
+    cancel() {
+        if (this.speechSynthesis) {
+            this.speechSynthesis.cancel();
+        }
+    }
+}
+
 // ゲームの状態管理
 class HiraganaFishingGame {
     constructor() {
@@ -8,13 +71,12 @@ class HiraganaFishingGame {
         this.isCasting = false;
         
         // 音声合成の設定
-        this.speechSynthesis = window.speechSynthesis;
-        this.voiceSettings = {
+        this.voiceSynthesizer = new VoiceSynthesizer({
             lang: 'ja-JP',
             rate: 0.5,  // ゆっくり
             pitch: 1.2,
             volume: 0.8
-        };
+        });
         
         // ひらがな一覧（子ども向けに基本的なもの）
         this.hiraganaList = [
@@ -48,20 +110,7 @@ class HiraganaFishingGame {
     
     init() {
         this.setupEventListeners();
-        this.initializeVoices();
         this.newGame();
-    }
-    
-    // 音声の初期化
-    initializeVoices() {
-        if (this.speechSynthesis) {
-            // 音声リストが読み込まれるまで待機
-            if (this.speechSynthesis.getVoices().length === 0) {
-                this.speechSynthesis.addEventListener('voiceschanged', () => {
-                    console.log('音声リストが読み込まれました');
-                });
-            }
-        }
     }
     
     setupEventListeners() {
@@ -99,56 +148,18 @@ class HiraganaFishingGame {
     
     // 音声案内機能
     announceTarget() {
-        if (!this.speechSynthesis) {
-            console.log('音声合成に対応していません');
-            return;
-        }
-        
         // 既存の音声を停止
-        this.speechSynthesis.cancel();
+        this.voiceSynthesizer.cancel();
         
-        // 1回目の音声を作成
-        const firstUtterance = new SpeechSynthesisUtterance(this.targetHiragana);
-        
-        // 音声設定を適用
-        firstUtterance.lang = this.voiceSettings.lang;
-        firstUtterance.rate = this.voiceSettings.rate;
-        firstUtterance.pitch = this.voiceSettings.pitch;
-        firstUtterance.volume = this.voiceSettings.volume;
-        
-        // 日本語音声を選択（利用可能な場合）
-        const voices = this.speechSynthesis.getVoices();
-        const japaneseVoice = voices.find(voice => 
-            voice.lang.includes('ja') || voice.name.includes('Japanese')
-        );
-        
-        if (japaneseVoice) {
-            firstUtterance.voice = japaneseVoice;
-        }
-        
-        // 1回目の音声終了後に2回目を再生
-        firstUtterance.onend = () => {
-            setTimeout(() => {
-                const secondUtterance = new SpeechSynthesisUtterance(this.targetHiragana);
-                
-                // 同じ音声設定を適用
-                secondUtterance.lang = this.voiceSettings.lang;
-                secondUtterance.rate = this.voiceSettings.rate;
-                secondUtterance.pitch = this.voiceSettings.pitch;
-                secondUtterance.volume = this.voiceSettings.volume;
-                
-                if (japaneseVoice) {
-                    secondUtterance.voice = japaneseVoice;
-                }
-                
-                this.speechSynthesis.speak(secondUtterance);
-            }, 500); // 0.5秒間を空ける
-        };
-        
-        // 少し遅延してから1回目の音声を再生（魚の生成後）
+        // 1回目の音声を再生
         setTimeout(() => {
-            this.speechSynthesis.speak(firstUtterance);
-        }, 800);
+            this.voiceSynthesizer.speak(this.targetHiragana, () => {
+                // 1回目の音声終了後に2回目を再生
+                setTimeout(() => {
+                    this.voiceSynthesizer.speak(this.targetHiragana);
+                }, 2000); // 2秒間を空ける
+            });
+        }, 500); // 魚の生成後に遅延
     }
     
     
