@@ -151,74 +151,6 @@ class HiraganaFishingGame {
         }, 800);
     }
     
-    // 正解時の音声案内
-    announceSuccess() {
-        if (!this.speechSynthesis) return;
-        
-        this.speechSynthesis.cancel();
-        
-        const messages = [
-            'やったね！',
-            'せいかい！',
-            'すごいね！',
-            'よくできました！'
-        ];
-        
-        const message = messages[Math.floor(Math.random() * messages.length)];
-        const utterance = new SpeechSynthesisUtterance(message);
-        
-        utterance.lang = this.voiceSettings.lang;
-        utterance.rate = this.voiceSettings.rate;
-        utterance.pitch = this.voiceSettings.pitch + 0.2; // 少し高めの声
-        utterance.volume = this.voiceSettings.volume;
-        
-        const voices = this.speechSynthesis.getVoices();
-        const japaneseVoice = voices.find(voice => 
-            voice.lang.includes('ja') || voice.name.includes('Japanese')
-        );
-        
-        if (japaneseVoice) {
-            utterance.voice = japaneseVoice;
-        }
-        
-        setTimeout(() => {
-            this.speechSynthesis.speak(utterance);
-        }, 500);
-    }
-    
-    // 不正解時の音声案内
-    announceMiss() {
-        if (!this.speechSynthesis) return;
-        
-        this.speechSynthesis.cancel();
-        
-        const messages = [
-            'ざんねん',
-            'もういちど',
-            'がんばって'
-        ];
-        
-        const message = messages[Math.floor(Math.random() * messages.length)];
-        const utterance = new SpeechSynthesisUtterance(message);
-        
-        utterance.lang = this.voiceSettings.lang;
-        utterance.rate = this.voiceSettings.rate - 0.1; // 少し遅めの声
-        utterance.pitch = this.voiceSettings.pitch - 0.2; // 少し低めの声
-        utterance.volume = this.voiceSettings.volume;
-        
-        const voices = this.speechSynthesis.getVoices();
-        const japaneseVoice = voices.find(voice => 
-            voice.lang.includes('ja') || voice.name.includes('Japanese')
-        );
-        
-        if (japaneseVoice) {
-            utterance.voice = japaneseVoice;
-        }
-        
-        setTimeout(() => {
-            this.speechSynthesis.speak(utterance);
-        }, 500);
-    }
     
     spawnFishes() {
         const fishContainer = document.getElementById('fish-container');
@@ -393,12 +325,10 @@ class HiraganaFishingGame {
                 this.score += 10;
                 this.showFeedback('やったね！ 🎉', 'success');
                 this.playSuccessSound();
-                this.announceSuccess();
             } else {
                 // 不正解
                 this.showFeedback('ざんねん... 😅', 'miss');
                 this.playMissSound();
-                this.announceMiss();
             }
             
             this.updateScore();
@@ -499,55 +429,22 @@ class HiraganaFishingGame {
     }
     
     playSuccessSound() {
-        // Web Audio APIを使用した簡単な成功音
         try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-            oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
+            const audio = new Audio('sound/dong-dong.mp3');
+            audio.volume = 0.5;
+            audio.play();
         } catch (error) {
-            console.log('音声再生に対応していません');
+            console.log('音声ファイルの再生に失敗しました');
         }
     }
     
     playMissSound() {
-        // Web Audio APIを使用したブブー音
         try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            // ブブー音の周波数設定（低い音で不協和音）
-            oscillator.frequency.setValueAtTime(150, audioContext.currentTime); // 低いF音
-            oscillator.frequency.setValueAtTime(120, audioContext.currentTime + 0.15); // さらに低く
-            oscillator.frequency.setValueAtTime(100, audioContext.currentTime + 0.3); // 最も低く
-            
-            // 音量設定（控えめに）
-            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
-            
-            // 波形をsquareにしてブザー音らしく
-            oscillator.type = 'square';
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.6);
+            const audio = new Audio('sound/buzzer.mp3');
+            audio.volume = 0.5;
+            audio.play();
         } catch (error) {
-            console.log('音声再生に対応していません');
+            console.log('音声ファイルの再生に失敗しました');
         }
     }
 }
