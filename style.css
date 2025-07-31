@@ -75,7 +75,7 @@ body {
     height: 0;
     background: #8B4513;
     transform: translateX(-50%);
-    transition: height 0.5s ease-in-out;
+    transition: all 0.8s ease-in-out;
     z-index: 10;
 }
 

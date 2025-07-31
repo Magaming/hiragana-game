@@ -104,18 +104,13 @@ class HiraganaFishingGame {
     }
     
     setupEventListeners() {
-        const castButton = document.getElementById('cast-button');
         const newGameButton = document.getElementById('new-game-button');
         
-        castButton.addEventListener('click', () => this.castFishingLine());
         newGameButton.addEventListener('click', () => this.newGame());
         
         // キーボードショートカット
         document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && !this.isCasting) {
-                e.preventDefault();
-                this.castFishingLine();
-            } else if (e.code === 'KeyR') {
+            if (e.code === 'KeyR') {
                 e.preventDefault();
                 this.newGame();
             }
@@ -131,10 +126,6 @@ class HiraganaFishingGame {
         this.generateNewTarget();
         this.spawnFishes();
         this.resetFishingLine();
-        
-        const castButton = document.getElementById('cast-button');
-        castButton.disabled = false;
-        castButton.textContent = '🎣 つりざおを投げる';
     }
     
     generateNewTarget() {
@@ -189,30 +180,6 @@ class HiraganaFishingGame {
         this.fishes.push({ element: fish, hiragana: hiragana, isTarget: isTarget });
     }
     
-    castFishingLine() {
-        if (this.isCasting || !this.isGameActive) return;
-        
-        this.isCasting = true;
-        const castButton = document.getElementById('cast-button');
-        const fishingLine = document.getElementById('fishing-line');
-        
-        castButton.disabled = true;
-        castButton.textContent = '🎣 つり中...';
-        
-        // 釣り糸を下ろす
-        fishingLine.style.height = '400px';
-        
-        // 魚をクリック可能にする（釣り糸が下りた時のみ）
-        setTimeout(() => {
-            this.enableFishCatching();
-        }, 500);
-        
-        // 一定時間後に釣り糸を戻す
-        setTimeout(() => {
-            this.retractFishingLine();
-        }, 3000);
-    }
-    
     enableFishCatching() {
         this.fishes.forEach(fish => {
             fish.element.style.pointerEvents = 'auto';
@@ -226,47 +193,76 @@ class HiraganaFishingGame {
     }
     
     catchFish(fishElement, hiragana) {
-        if (!this.isCasting) return;
+        if (this.isCasting || !this.isGameActive) return;
         
+        this.isCasting = true;
         this.disableFishCatching();
-        fishElement.classList.add('caught');
         
-        if (hiragana === this.targetHiragana) {
-            // 正解
-            this.score += 10;
-            this.showFeedback('やったね！ 🎉', 'success');
-            this.playSuccessSound();
-        } else {
-            // 不正解
-            this.showFeedback('ざんねん... 😅', 'miss');
-        }
+        // 魚の位置を取得
+        const fishRect = fishElement.getBoundingClientRect();
+        const gameAreaRect = document.querySelector('.game-area').getBoundingClientRect();
+        const fishX = fishRect.left - gameAreaRect.left + fishRect.width / 2;
+        const fishY = fishRect.top - gameAreaRect.top + fishRect.height / 2;
         
-        this.updateScore();
+        // 釣り針を魚の位置まで移動
+        this.moveHookToFish(fishX, fishY, () => {
+            // 釣り針が魚に到達した後の処理
+            fishElement.classList.add('caught');
+            
+            if (hiragana === this.targetHiragana) {
+                // 正解
+                this.score += 10;
+                this.showFeedback('やったね！ 🎉', 'success');
+                this.playSuccessSound();
+            } else {
+                // 不正解
+                this.showFeedback('ざんねん... 😅', 'miss');
+            }
+            
+            this.updateScore();
+            
+            // 魚を削除
+            setTimeout(() => {
+                fishElement.remove();
+                this.fishes = this.fishes.filter(fish => fish.element !== fishElement);
+            }, 500);
+            
+            // 次のラウンドの準備
+            setTimeout(() => {
+                this.retractFishingLine();
+                this.prepareNextRound();
+            }, 1500);
+        });
+    }
+    
+    moveHookToFish(fishX, fishY, callback) {
+        const fishingLine = document.getElementById('fishing-line');
+        const hook = document.getElementById('hook');
         
-        // 魚を削除
+        // 釣り糸の長さを魚の位置まで延ばす
+        fishingLine.style.height = fishY + 'px';
+        
+        // 釣り糸の位置を魚のX座標に移動
+        fishingLine.style.left = fishX + 'px';
+        fishingLine.style.transform = 'translateX(-50%)';
+        
+        // アニメーション完了後にコールバックを実行
         setTimeout(() => {
-            fishElement.remove();
-            this.fishes = this.fishes.filter(fish => fish.element !== fishElement);
-        }, 500);
-        
-        // 次のラウンドの準備
-        setTimeout(() => {
-            this.retractFishingLine();
-            this.prepareNextRound();
-        }, 1500);
+            callback();
+        }, 800);
     }
     
     retractFishingLine() {
         const fishingLine = document.getElementById('fishing-line');
+        
+        // 釣り糸を元の位置に戻す
         fishingLine.style.height = '0px';
+        fishingLine.style.left = '50%';
+        fishingLine.style.transform = 'translateX(-50%)';
         
         setTimeout(() => {
             this.isCasting = false;
-            const castButton = document.getElementById('cast-button');
-            if (this.isGameActive) {
-                castButton.disabled = false;
-                castButton.textContent = '🎣 つりざおを投げる';
-            }
+            this.enableFishCatching();
         }, 500);
     }
     
