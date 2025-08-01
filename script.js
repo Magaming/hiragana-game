@@ -26,8 +26,6 @@ class VoiceSynthesizer {
     selectFemaleJapaneseVoice(voices) {
         // 女性の日本語音声を優先順位で選択
         const femaleVoiceNames = [
-            'Microsoft Haruka Desktop - Japanese',
-            'Microsoft Haruka - Japanese',
             'Kyoko',
             'Otoya',
             'Google 日本語',
