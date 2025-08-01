@@ -25,8 +25,8 @@ https://magaming.github.io/hiragana-game/ にアクセス！
 - **Rキー**: 新しいゲームを開始
 
 ## 🙏 クレジット
-音：[OtoLogic](https://otologic.jp/free/license.html)
-イラスト：[いらすとや](https://www.irasutoya.com/)
+- 音：[OtoLogic](https://otologic.jp/free/license.html)
+- イラスト：[いらすとや](https://www.irasutoya.com/)
 
 ---
 
