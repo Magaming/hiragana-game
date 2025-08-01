@@ -11,23 +11,51 @@ class VoiceSynthesizer {
         if (!this.speechSynthesis) return;
         
         const voices = this.speechSynthesis.getVoices();
-        this.japaneseVoice = voices.find(voice => 
-            voice.lang.includes('ja') || voice.name.includes('Japanese')
-        );
+        // 女性の日本語音声を優先的に選択
+        this.japaneseVoice = this.selectFemaleJapaneseVoice(voices);
         
         // 音声リストが読み込まれていない場合は待機
         if (voices.length === 0) {
             this.speechSynthesis.addEventListener('voiceschanged', () => {
                 const newVoices = this.speechSynthesis.getVoices();
-                this.japaneseVoice = newVoices.find(voice => 
-                    voice.lang.includes('ja') || voice.name.includes('Japanese')
-                );
+                this.japaneseVoice = this.selectFemaleJapaneseVoice(newVoices);
             });
         }
     }
     
+    selectFemaleJapaneseVoice(voices) {
+        // 女性の日本語音声を優先順位で選択
+        const femaleVoiceNames = [
+            'Microsoft Haruka Desktop - Japanese',
+            'Microsoft Haruka - Japanese',
+            'Kyoko',
+            'Otoya',
+            'Google 日本語',
+            'Samantha',
+            'Alex'
+        ];
+        
+        // 優先順位に従って女性音声を検索
+        for (const voiceName of femaleVoiceNames) {
+            const voice = voices.find(v => 
+                v.name.includes(voiceName) && 
+                (v.lang.includes('ja') || v.name.includes('Japanese'))
+            );
+            if (voice) return voice;
+        }
+        
+        // 女性音声が見つからない場合は日本語音声を検索
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        // それでも見つからない場合はデフォルト音声
+        return japaneseVoice || voices[0];
+    }
+    
     createUtterance(text) {
         const utterance = new SpeechSynthesisUtterance(text);
+        utterance.name = this.settings.name;
         utterance.lang = this.settings.lang;
         utterance.rate = this.settings.rate;
         utterance.pitch = this.settings.pitch;
@@ -70,12 +98,12 @@ class HiraganaFishingGame {
         this.isGameActive = true;
         this.isCasting = false;
         
-        // 音声合成の設定
+        // 音声合成の設定（女性音声）
         this.voiceSynthesizer = new VoiceSynthesizer({
             lang: 'ja-JP',
             rate: 0.5,  // ゆっくり
-            pitch: 1.2,
-            volume: 0.8
+            pitch: 1.2, // 少し高めのピッチで女性らしく
+            volume: 1.0
         });
         
         // ひらがな一覧（子ども向けに基本的なもの）
